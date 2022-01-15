@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+
+  <!-- 移動 -->
+  <div class="row p-3 mx-auto w-50">
+    <div class="col-md-2" style="text-align: center;">
+      <a href="/{{ prev_month.strftime('%Y/%m') }}" type="button" class="text-secondary">
+        <i class="material-icons" style="font-size: 50px;">chevron_left</i>
+      </a>
+    </div>
+    <div class="col-md-8">
+      <h1 class="text-secondary text-center">
+        {{ calendar_rows[1][0].date.year }}年 {{calendar_rows[1][0].date.month }}月
+      </h1>
+    </div>
+    <div class="col-md-2" style="text-align: center;">
+      <a href="/{{ next_month.strftime('%Y/%m') }}" type="button" class="text-secondary">
+        <i class="material-icons" style="font-size: 50px;">chevron_right</i>
+      </a>
+    </div>
+  </div>
+
+  <!-- calender -->
+  <table class="table table-bordered">
+    <!-- top row -->
+    <tr class="row">
+      {% for w in ["日","月","火","水","木","金","土"] %}
+      <th class="text-center text-secondary col">{{ w }}</th>
+      {% endfor %}
+    </tr>
+    <!-- days -->
+    {% for i in range(5) %}
+    <tr class="row">
+      {% for j in range(7) %}
+      {% set cal_day = calendar_rows[i][j] %}
+      <th class="text-center col">
+        <!-- day -->
+        <div>
+          <div class="row">
+            <div class="col" style="text-align: left;">
+              <span class="h5
+                {% if cal_day.date.month != calendar_rows[1][0].month %}
+                  text-muted text-opacity-50
+                {% endif %}
+                {% if cal_day.date == today %}
+                  text-white
+                {% endif %}">
+                {{ cal_day.date.day }}
+              </span>
+            </div>
+            <div class="col" style="text-align: center;">
+              {% if cal_day.date == today %}
+              <span class="badge bg-danger rounded-pill">本日</span>
+              {% endif %}
+            </div>
+            <div class="col" style="text-align: right;">
+              <a href="/add_event/{{ cal_day.date.strftime('%Y/%m/%d') }}">
+                <i class="material-icons text-muted">add</i>
+              </a>
+            </div>
+          </div>
+          <!-- events -->
+          <div class="">
+            {% for event in cal_day.events %}
+            <a href="/update_event/{{ event.id }}" style="text-decoration: none;">
+              <div class="container rounded
+                {% if event.person_id == 1 %}
+                  bg-info
+                {% elif event.person_id == 2 %}
+                  bg-success
+                {% else %}
+                  bg-primary
+                {% endif %}">
+                <span class="text-white">
+                  {{ event.content }}
+                </span>
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+      </th>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+{% endblock %}

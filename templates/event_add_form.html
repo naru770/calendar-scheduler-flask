@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row p-3 mx-auto w-50">
+
+  <h1 class="p-3 mb-2 text-secondary text-center">
+    予定追加
+  </h1>
+
+  <form method="post">
+    <div class="mb-3">
+      <label for="selectDate" class="form-label">月日</label>
+      <input id="selectDate" type="date" name="date" value="{{ date.strftime('%Y-%m-%d') }}">
+    </div>
+    <div class="mb-3">
+      <label for="selectPerson" class="form-label">人</label>
+      <select name="person_id" id="selectPerson" class="form-select">
+        <option selected>人を選択</option>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+        <option value="3">Three</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="inputContent" class="form-label">予定</label>
+      <input name="content" id="inputContent" type="text" class="form-control" placeholder="予定を入力">
+    </div>
+    <button type="submit" class="btn btn-primary">追加</button>
+  </form>
+
+</div>
+
+{% endblock %}
