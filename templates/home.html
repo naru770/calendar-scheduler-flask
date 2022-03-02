@@ -1,26 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container" id="pc_calendar">
-
-  <div class="row p-3 mx-auto w-50">
-    <div class="col-md-2" style="text-align: center;">
-      <a href="/{{ prev_month.strftime('%Y/%m') }}" type="button" class="text-secondary">
-        <i class="material-icons" style="font-size: 50px;">chevron_left</i>
-      </a>
-    </div>
-    <div class="col-md-8">
-      <h1 class="text-secondary text-center">
-        {{ calendar_rows[1][0].date.year }}年 {{calendar_rows[1][0].date.month }}月
-      </h1>
-    </div>
-    <div class="col-md-2" style="text-align: center;">
-      <a href="/{{ next_month.strftime('%Y/%m') }}" type="button" class="text-secondary">
-        <i class="material-icons" style="font-size: 50px;">chevron_right</i>
-      </a>
-    </div>
+<div class="container mt-3" id="controller">
+  <div class="row">
+  <div class="col">
+    <span class="h3">
+      {{ this_month.year }}年 {{ this_month.month }}月
+    </span>
   </div>
+  <div class="btn-group col" role="group">
+    <a href="/{{ prev_month.strftime('%Y/%m') }}" type="button" class="btn btn-outline-primary">前</a>
+    <a href="/{{ next_month.strftime('%Y/%m') }}" type="button" class="btn btn-outline-primary">次</a>
+  </div>
+</div>
+</div>
 
+<div class="container mt-3" id="pc_calendar">
   <table class="table table-bordered">
     <!-- top row -->
     <tr class="row">
@@ -33,11 +28,11 @@
     <tr class="row">
       {% for j in range(7) %}
       {% set cal_day = calendar_rows[i][j] %}
-      <th class="text-center col">
+      <td class="text-center col">
         <!-- day -->
         <div>
           <div class="row">
-            <div class="col" style="text-align: left;">
+            <div class="col">
               <span class="h5
                 {% if cal_day.date.month != calendar_rows[1][0].month %}
                   text-muted text-opacity-50
@@ -55,7 +50,9 @@
             </div>
             <div class="col" style="text-align: right;">
               <a href="/add_event/{{ cal_day.date.strftime('%Y/%m/%d') }}">
-                <i class="material-icons text-muted">add</i>
+                <span class="material-icons-outlined text-muted">
+                  add_circle_outline
+                </span>
               </a>
             </div>
           </div>
@@ -79,7 +76,7 @@
             {% endfor %}
           </div>
         </div>
-      </th>
+      </td>
       {% endfor %}
     </tr>
     {% endfor %}
@@ -87,38 +84,28 @@
 </div>
 
 
-<div class="container" id="sp_calendar">
-  <div class="row p-3 mx-auto w-50">
-    <div class="col-md-2" style="text-align: center;">
-      <a href="/{{ prev_month.strftime('%Y/%m') }}" type="button" class="text-secondary">
-        <i class="material-icons" style="font-size: 50px;">chevron_left</i>
-      </a>
-    </div>
-    <div class="col-md-8">
-      <h1 class="text-secondary text-center">
-        {{ calendar_rows[1][0].date.year }}年 {{calendar_rows[1][0].date.month }}月
-      </h1>
-    </div>
-    <div class="col-md-2" style="text-align: center;">
-      <a href="/{{ next_month.strftime('%Y/%m') }}" type="button" class="text-secondary">
-        <i class="material-icons" style="font-size: 50px;">chevron_right</i>
-      </a>
-    </div>
-  </div>
+<div class="container mt-3" id="sp_calendar">
 
   <table class="table table-bordered">
     <tr>
       {% for w in ["日", "内容"] %}
-      <th>{{ w }}</th>
+      <th class="text-center text-secondary">{{ w }}</th>
       {% endfor %}
     </tr>
     {% for i in range(5) %}
     {% for j in range(7) %}
     {% set cal_day = calendar_rows[i][j] %}
     {% if cal_day.date.month == this_month.month %}
-    <tr>
+    <tr style="background-color:
+    {% if cal_day.date.weekday() == 6 %}
+      #e5fff2
+    {% elif cal_day.date.weekday() == 0 %}
+      #ffe5e5
+    {% endif %}">
       <td>
-        {{ cal_day.date.day }}日 ({{ week[cal_day.date.weekday()] }})
+        <span class="h5 text-secondary">
+          {{ cal_day.date.day }}日 ({{ week[cal_day.date.weekday()] }})
+        </span>
       </td>
       <td>
         {% for event in cal_day.events %}
@@ -139,7 +126,9 @@
         {% endfor %}
         <div class="col" style="text-align: right;">
           <a href="/add_event/{{ cal_day.date.strftime('%Y/%m/%d') }}">
-            <i class="material-icons text-muted">add</i>
+            <span class="material-icons-outlined text-muted">
+              add_circle_outline
+            </span>
           </a>
         </div>
       </td>
@@ -148,12 +137,16 @@
     {% endfor %}
     {% endfor %}
   </table>
+
 </div>
 
-<!-- スマホならカレンダーを削除 -->
+<!-- デバイスによって表示を変える -->
 <script>
   if (navigator.userAgent.match(/iPhone|Android.*Mobile/)) {
     document.getElementById('pc_calendar').remove();
+  }
+  else {
+    document.getElementById('sp_calendar').setAttribute('class', 'container w-50');
   }
 </script>
 
