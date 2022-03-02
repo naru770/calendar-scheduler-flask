@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container">
+<div class="container" id="pc_calendar">
 
-  <!-- 移動 -->
   <div class="row p-3 mx-auto w-50">
     <div class="col-md-2" style="text-align: center;">
       <a href="/{{ prev_month.strftime('%Y/%m') }}" type="button" class="text-secondary">
@@ -22,11 +21,10 @@
     </div>
   </div>
 
-  <!-- calender -->
   <table class="table table-bordered">
     <!-- top row -->
     <tr class="row">
-      {% for w in ["日","月","火","水","木","金","土"] %}
+      {% for w in week %}
       <th class="text-center text-secondary col">{{ w }}</th>
       {% endfor %}
     </tr>
@@ -51,7 +49,7 @@
               </span>
             </div>
             <div class="col" style="text-align: center;">
-              {% if cal_day.date == today %}
+              {% if cal_day.date.date() == today.date() %}
               <span class="badge bg-danger rounded-pill">本日</span>
               {% endif %}
             </div>
@@ -65,7 +63,7 @@
           <div class="">
             {% for event in cal_day.events %}
             <a href="/update_event/{{ event.id }}" style="text-decoration: none;">
-              <div class="container rounded
+              <div class="rounded
                 {% if event.person_id == 1 %}
                   bg-info
                 {% elif event.person_id == 2 %}
@@ -87,5 +85,76 @@
     {% endfor %}
   </table>
 </div>
+
+
+<div class="container" id="sp_calendar">
+  <div class="row p-3 mx-auto w-50">
+    <div class="col-md-2" style="text-align: center;">
+      <a href="/{{ prev_month.strftime('%Y/%m') }}" type="button" class="text-secondary">
+        <i class="material-icons" style="font-size: 50px;">chevron_left</i>
+      </a>
+    </div>
+    <div class="col-md-8">
+      <h1 class="text-secondary text-center">
+        {{ calendar_rows[1][0].date.year }}年 {{calendar_rows[1][0].date.month }}月
+      </h1>
+    </div>
+    <div class="col-md-2" style="text-align: center;">
+      <a href="/{{ next_month.strftime('%Y/%m') }}" type="button" class="text-secondary">
+        <i class="material-icons" style="font-size: 50px;">chevron_right</i>
+      </a>
+    </div>
+  </div>
+
+  <table class="table table-bordered">
+    <tr>
+      {% for w in ["日", "内容"] %}
+      <th>{{ w }}</th>
+      {% endfor %}
+    </tr>
+    {% for i in range(5) %}
+    {% for j in range(7) %}
+    {% set cal_day = calendar_rows[i][j] %}
+    {% if cal_day.date.month == this_month.month %}
+    <tr>
+      <td>
+        {{ cal_day.date.day }}日 ({{ week[cal_day.date.weekday()] }})
+      </td>
+      <td>
+        {% for event in cal_day.events %}
+        <a href="/update_event/{{ event.id }}" style="text-decoration: none;">
+          <div class="rounded
+                {% if event.person_id == 1 %}
+                  bg-info
+                {% elif event.person_id == 2 %}
+                  bg-success
+                {% else %}
+                  bg-primary
+                {% endif %}">
+            <span class="text-white">
+              {{ event.content }}
+            </span>
+          </div>
+        </a>
+        {% endfor %}
+        <div class="col" style="text-align: right;">
+          <a href="/add_event/{{ cal_day.date.strftime('%Y/%m/%d') }}">
+            <i class="material-icons text-muted">add</i>
+          </a>
+        </div>
+      </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+  </table>
+</div>
+
+<!-- スマホならカレンダーを削除 -->
+<script>
+  if (navigator.userAgent.match(/iPhone|Android.*Mobile/)) {
+    document.getElementById('pc_calendar').remove();
+  }
+</script>
 
 {% endblock %}

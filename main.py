@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 import psycopg2
-from datetime import datetime, timedelta, timezone, date
+from datetime import datetime, timedelta, timezone
 import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db_uri = os.environ.get('DATABASE_URL')
+db_uri = os.environ.get('DATABASE_URL') or 'sqlite:///scs.db'
 
 if not 'postgresql' in db_uri:
     db_uri = db_uri.replace('postgres', 'postgresql', 1)
@@ -24,21 +24,14 @@ class Event(db.Model):
 JST = timezone(timedelta(hours=+9), 'JST')
 
 
-def get_first_square_of_calendar(cal_date: date) -> date:
-    
-    first_day = date(cal_date.year, cal_date.month, 1)
-
-    if first_day.weekday() == 6:
-        return first_day
-    else:
-        return first_day - timedelta(days=first_day.weekday() + 1)
+def get_first_square_of_calendar(cal_date: datetime) -> datetime:
+    first = datetime(cal_date.year, cal_date.month, 1)
+    return first - timedelta(days=(first.weekday() + 1) % 7)
 
 
 @app.route("/", methods=["GET"])
 def home():
-
     ret_url = datetime.now(JST).strftime("/%Y/%m")
-
     return redirect(ret_url)
 
 
@@ -47,8 +40,9 @@ def calendar(year, month):
 
     if request.method == "GET":
 
-        this_month = date(int(year), int(month), 1)
-        cal_date = get_first_square_of_calendar(this_month)        
+        this_month = datetime(int(year), int(month), 1)
+        fisrt_day = get_first_square_of_calendar(this_month)
+        cal_date = fisrt_day
 
         CALENDAR_HEIGHT = 6
         CALENDAR_WIDTH = 7
@@ -63,7 +57,7 @@ def calendar(year, month):
                 
                 events = db.session\
                     .query(Event.id, Event.person_id, Event.content)\
-                    .filter(Event.date==cal_date.strftime("%Y-%m-%d"))\
+                    .filter(Event.date==cal_date)\
                     .all()
 
                 calendar_row.append({"date": cal_date, "events": events})
@@ -71,14 +65,18 @@ def calendar(year, month):
 
             calendar_rows.append(calendar_row)
 
+        week = ["日","月","火","水","木","金","土"]
+
         return render_template(
             "home.html",
             title = "カレンダー",
             calendar_rows = calendar_rows,
             prev_month = this_month - timedelta(days=2),
+            this_month = this_month,
             next_month = this_month + timedelta(days=32),
-            today = datetime.now(JST).date()
-            )
+            today = datetime.now(JST),
+            week = week
+        )
 
 
 @app.route("/add_event/<year>/<month>/<day>", methods=["GET", "POST"])
@@ -90,11 +88,11 @@ def add_event(year, month, day):
             "event_add_form.html",
             title = "予定入力フォーム",
             date = datetime(int(year), int(month), int(day))
-            )
+        )
 
     elif request.method == "POST":
         event = Event()
-        event.date = request.form["date"]
+        event.date = datetime.strptime(request.form["date"], '%Y-%m-%d')
         event.person_id = request.form["person_id"]
         event.content = request.form["content"]
         db.session.add(event)
@@ -119,14 +117,14 @@ def update_event(id):
             date = event.date,
             person_id = event.person_id,
             content = event.content
-            )
+        )
 
     elif request.method == "POST":
         event = db.session\
             .query(Event)\
             .filter(Event.id==id)\
             .one()
-        event.date = request.form["date"]
+        event.date = datetime.strptime(request.form["date"], '%Y-%m-%d')
         event.person_id = request.form["person_id"]
         event.content = request.form["content"]
         db.session.commit()
@@ -156,4 +154,3 @@ def delete_event(id):
 if __name__ == "__main__":
     db.create_all()
     app.run(debug=True)
-    
