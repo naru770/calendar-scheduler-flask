@@ -28,7 +28,12 @@
     <tr class="row">
       {% for j in range(7) %}
       {% set cal_day = calendar_rows[i][j] %}
-      <td class="text-center col">
+      <td class="text-center col" style="height: 10em; background-color:
+      {% if j == 6 %}
+        #e5fff2
+      {% elif j == 0 %}
+        #ffe5e5
+      {% endif %}">
         <!-- day -->
         <div>
           <div class="row">
@@ -102,7 +107,7 @@
     {% elif cal_day.date.weekday() == 0 %}
       #ffe5e5
     {% endif %}">
-      <td>
+      <td style="width: 8em; text-align: center;">
         <span class="h5 text-secondary">
           {{ cal_day.date.day }}日 ({{ week[cal_day.date.weekday()] }})
         </span>
