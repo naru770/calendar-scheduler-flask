@@ -4,19 +4,19 @@
 <div class="container mt-3" id="controller">
   <div class="row">
   <div class="col">
-    <span class="h3">
+    <p class="" style="font-size: 2rem; font-weight: 600; text-align: center; margin-bottom: 0em;">
       {{ this_month.year }}年 {{ this_month.month }}月
-    </span>
+    </p>
   </div>
   <div class="btn-group col" role="group">
     <a href="/{{ prev_month.strftime('%Y/%m') }}" type="button" class="btn btn-outline-primary">前</a>
     <a href="/{{ next_month.strftime('%Y/%m') }}" type="button" class="btn btn-outline-primary">次</a>
   </div>
-  <div class="col"></div>
+  <div class="col" id="controllerSpaceForPc" style="display: none;"></div>
 </div>
 </div>
 
-<div class="container mt-3" id="pc_calendar" style="display: none;">
+<div class="container mt-3" id="pcCalendar" style="display: none;">
   <table class="table table-bordered">
     <!-- top row -->
     <tr class="row">
@@ -90,7 +90,7 @@
 </div>
 
 
-<div class="container mt-3" id="sp_calendar" style="display: none;">
+<div class="container mt-3" id="spCalendar" style="display: none;">
 
   <table class="table table-bordered">
     <tr>
@@ -152,10 +152,11 @@
 <!-- デバイスによって表示を変える -->
 <script>
   if (navigator.userAgent.match(/iPhone|Android.*Mobile/)) {
-    document.getElementById('sp_calendar').style.display = 'block'
+    document.getElementById('spCalendar').style.display = 'block'
   }
   else {
-    document.getElementById('pc_calendar').style.display = 'block'
+    document.getElementById('pcCalendar').style.display = 'block'
+    document.getElementById('controllerSpaceForPc').style.display = 'block'
   }
 </script>
 
