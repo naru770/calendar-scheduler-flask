@@ -12,10 +12,11 @@
     <a href="/{{ prev_month.strftime('%Y/%m') }}" type="button" class="btn btn-outline-primary">前</a>
     <a href="/{{ next_month.strftime('%Y/%m') }}" type="button" class="btn btn-outline-primary">次</a>
   </div>
+  <div class="col"></div>
 </div>
 </div>
 
-<div class="container mt-3" id="pc_calendar">
+<div class="container mt-3" id="pc_calendar" style="display: none;">
   <table class="table table-bordered">
     <!-- top row -->
     <tr class="row">
@@ -89,7 +90,7 @@
 </div>
 
 
-<div class="container mt-3" id="sp_calendar">
+<div class="container mt-3" id="sp_calendar" style="display: none;">
 
   <table class="table table-bordered">
     <tr>
@@ -151,10 +152,10 @@
 <!-- デバイスによって表示を変える -->
 <script>
   if (navigator.userAgent.match(/iPhone|Android.*Mobile/)) {
-    document.getElementById('pc_calendar').remove();
+    document.getElementById('sp_calendar').style.display = 'block'
   }
   else {
-    document.getElementById('sp_calendar').setAttribute('class', 'mt-3 container w-50');
+    document.getElementById('pc_calendar').style.display = 'block'
   }
 </script>
 
