@@ -65,8 +65,6 @@ def calendar(year, month):
 
             calendar_rows.append(calendar_row)
 
-        week = ["日","月","火","水","木","金","土"]
-
         return render_template(
             "home.html",
             title = "カレンダー",
@@ -74,8 +72,7 @@ def calendar(year, month):
             prev_month = this_month - timedelta(days=2),
             this_month = this_month,
             next_month = this_month + timedelta(days=32),
-            today = datetime.now(JST),
-            week = week
+            today = datetime.now(JST)
         )
 
 

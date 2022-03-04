@@ -19,7 +19,7 @@
   <table class="table table-bordered">
     <!-- top row -->
     <tr class="row">
-      {% for w in week %}
+      {% for w in ["日","月","火","水","木","金","土"] %}
       <th class="text-center text-secondary col">{{ w }}</th>
       {% endfor %}
     </tr>
@@ -102,15 +102,18 @@
     {% set cal_day = calendar_rows[i][j] %}
     {% if cal_day.date.month == this_month.month %}
     <tr style="background-color:
-    {% if cal_day.date.weekday() == 6 %}
+    {% if cal_day.date.weekday() == 5 %}
       #e5fff2
-    {% elif cal_day.date.weekday() == 0 %}
+    {% elif cal_day.date.weekday() == 6 %}
       #ffe5e5
     {% endif %}">
-      <td style="width: 8em; text-align: center;">
-        <span class="h5 text-secondary">
-          {{ cal_day.date.day }}日 ({{ week[cal_day.date.weekday()] }})
+      <td style="width: 5em; text-align: center;">
+        <span class="text-secondary h6 text-center">
+          {{ cal_day.date.day }}日 ({{ ["月","火","水","木","金","土","日"][cal_day.date.weekday()] }})
         </span>
+        {% if cal_day.date.date() == today.date() %}
+        <span class="badge bg-danger">本日</span>
+        {% endif %}
       </td>
       <td>
         {% for event in cal_day.events %}
@@ -151,7 +154,7 @@
     document.getElementById('pc_calendar').remove();
   }
   else {
-    document.getElementById('sp_calendar').setAttribute('class', 'container w-50');
+    document.getElementById('sp_calendar').setAttribute('class', 'mt-3 container w-50');
   }
 </script>
 
