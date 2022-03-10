@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container mt-3" id="controller">
+<div class="container mt-3" id="controller" style="display: none;">
   <div class="row">
   <div class="col">
     <p class="" style="font-size: 2rem; font-weight: 600; text-align: center; margin-bottom: 0em;">
@@ -29,12 +29,12 @@
     <tr class="row">
       {% for j in range(7) %}
       {% set cal_day = calendar_rows[i][j] %}
-      <td class="text-center col" style="height: 10em; background-color:
-      {% if j == 6 %}
-        #e5fff2
-      {% elif j == 0 %}
-        #ffe5e5
-      {% endif %}">
+      <td class="text-center col square
+        {% if cal_day.date.weekday() == 5 %}
+        saturday-square
+        {% elif cal_day.date.weekday() == 6 %}
+        sunday-square
+        {% endif %}">
         <!-- day -->
         <div>
           <div class="row">
@@ -68,11 +68,11 @@
             <a href="/update_event/{{ event.id }}" style="text-decoration: none;">
               <div class="rounded
                 {% if event.person_id == 1 %}
-                  bg-info
+                user1
                 {% elif event.person_id == 2 %}
-                  bg-success
+                user2
                 {% else %}
-                  bg-primary
+                user3
                 {% endif %}">
                 <span class="text-white">
                   {{ event.content }}
@@ -102,12 +102,12 @@
     {% for j in range(7) %}
     {% set cal_day = calendar_rows[i][j] %}
     {% if cal_day.date.month == this_month.month %}
-    <tr style="background-color:
-    {% if cal_day.date.weekday() == 5 %}
-      #e5fff2
-    {% elif cal_day.date.weekday() == 6 %}
-      #ffe5e5
-    {% endif %}">
+    <tr class="text-center col
+        {% if cal_day.date.weekday() == 5 %}
+        saturday-square
+        {% elif cal_day.date.weekday() == 6 %}
+        sunday-square
+        {% endif %}">
       <td style="width: 5em; text-align: center;">
         <span class="text-secondary h6 text-center">
           {{ cal_day.date.day }}日 ({{ ["月","火","水","木","金","土","日"][cal_day.date.weekday()] }})
@@ -121,11 +121,11 @@
         <a href="/update_event/{{ event.id }}" style="text-decoration: none;">
           <div class="rounded
                 {% if event.person_id == 1 %}
-                  bg-info
+                user1
                 {% elif event.person_id == 2 %}
-                  bg-success
+                user2
                 {% else %}
-                  bg-primary
+                user3
                 {% endif %}">
             <span class="text-white">
               {{ event.content }}
@@ -158,6 +158,30 @@
     document.getElementById('controllerSpaceForPc').style.display = 'block'
     document.getElementById('pcCalendar').style.display = 'block'
   }
+  document.getElementById('controller').style.display = 'block'
 </script>
+
+<style>
+  .user1 {
+    background-color: limegreen;
+  }
+  .user2 {
+    background-color: pink;
+  }
+  .user3 {
+    background-color: skyblue;
+  }
+
+  .square {
+    height: 10em;
+  }
+
+  .saturday {
+    background-color: #e5fff2;
+  }
+  .sunday {
+    background-color: #ffe5e5;
+  }
+</style>
 
 {% endblock %}
